@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kinobilletter</title>
+  <style>
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h1>Bestilling av kinobilletter</h1>
+
+  <label for="movie">Velg film:</label>
+  <select id="movie">
+    <option value="film1">Pirates of the Carribean</option>
+    <option value="film2">Lord of the rings</option>
+    <option value="film3">Twilight</option>
+  </select>
+  <br>
+
+  <label for="tickets">Antall billetter:</label>
+  <input type="number" id="tickets" min="1" required>
+  <span id="ticketsError" class="error"></span>
+  <br>
+
+  <label for="firstName">Fornavn:</label>
+  <input type="text" id="firstName" required pattern="[A-Za-zÅÆØåæø]{1,}">
+  <span id="firstNameError" class="error"></span>
+  <br>
+
+  <label for="lastName">Etternavn:</label>
+  <input type="text" id="lastName" required pattern="[A-Za-zÅÆØåæø]{1,}">
+  <span id="lastNameError" class="error"></span>
+  <br>
+
+  <label for="phone">Telefonnummer:</label>
+  <input type="tel" id="phone" required pattern="[0-9]{8}">
+  <span id="phoneError" class="error"></span>
+  <br>
+
+  <label for="email">E-postadresse:</label>
+  <input type="email" id="email" required>
+  <span id="emailError" class="error"></span>
+  <br>
+
+  <button onclick="buyTickets()">Kjøp billetter</button>
+
+  <h2>Alle billetter</h2>
+  <ul id="ticketList"></ul>
+
+  <button onclick="clearTickets()">Tøm liste</button>
+
+  <script>
+    const ticketList = [];
+
+    function buyTickets() {
+      const movie = document.getElementById("movie").value;
+      const numTickets = parseInt(document.getElementById("tickets").value);
+      const firstName = document.getElementById("firstName").value;
+      const lastName = document.getElementById("lastName").value;
+      const phone = document.getElementById("phone").value;
+      const email = document.getElementById("email").value;
+
+      if (!validateForm(firstName, lastName, numTickets, phone, email)) {
+        return;
+      }
+
+      const ticket = {
+        movie: movie,
+        numTickets: numTickets,
+        firstName: firstName,
+        lastName: lastName,
+        phone: phone,
+        email: email
+      };
+
+      ticketList.push(ticket);
+      displayTickets();
+      clearForm();
+    }
+
+    function validateForm(firstName, lastName, numTickets, phone, email) {
+      const nameRegex = /^[A-Za-zÅÆØåæø]+$/;
+      const phoneRegex = /^[0-9]{8}$/;
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      let isValid = true;
+
+      if (!nameRegex.test(firstName)) {
+        document.getElementById("firstNameError").textContent = "Vennligst fyll inn et gyldig fornavn.";
+        isValid = false;
+      } else {
+        document.getElementById("firstNameError").textContent = "";
+      }
+      
+      if (!nameRegex.test(lastName)) {
+        document.getElementById("lastNameError").textContent = "Vennligst fyll inn et gyldig etternavn.";
+        isValid = false;
+      } else {
+        document.getElementById("lastNameError").textContent = "";
+      }
+      
+      if (isNaN(numTickets) || numTickets < 1) {
+        document.getElementById("ticketsError").textContent = "Vennligst fyll inn et gyldig antall billetter.";
+        isValid = false;
+      } else {
+        document.getElementById("ticketsError").textContent = "";
+      }
+      
+      if (!phoneRegex.test(phone)) {
+        document.getElementById("phoneError").textContent = "Vennligst fyll inn et gyldig telefonnummer.";
+        isValid = false;
+      } else {
+        document.getElementById("phoneError").textContent = "";
+      }
+      
+      if (!emailRegex.test(email)) {
+        document.getElementById("emailError").textContent = "Vennligst fyll inn en gyldig e-postadresse.";
+        isValid = false;
+      } else {
+        document.getElementById("emailError").textContent = "";
+      }
+      
+      return isValid;
+    }
+
+    function displayTickets() {
+      const ticketListElement = document.getElementById("ticketList");
+      ticketListElement.innerHTML = "";
+      ticketList.forEach(ticket => {
+        const listItem = document.createElement("li");
+        listItem.textContent = `${ticket.firstName} ${ticket.lastName}, ${ticket.numTickets} billetter til ${ticket.movie}, ${ticket.phone}, ${ticket.email}`;
+        ticketListElement.appendChild(listItem);
+      });
+    }
+
+    function clearTickets() {
+      ticketList.length = 0;
+      displayTickets();
+    }
+
+    function clearForm() {
+      document.getElementById("movie").value = "";
+      document.getElementById("tickets").value = "";
+      document.getElementById("firstName").value = "";
+      document.getElementById("lastName").value = "";
+      document.getElementById("phone").value = "";
+      document.getElementById("email").value = "";
+    }
+  </script>
+</body>
+</html>
